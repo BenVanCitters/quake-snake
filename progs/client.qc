@@ -61,7 +61,7 @@ void() SetChangeParms =
 		self.health = halfMaxHealth;
 		
 	parm1 = self.items;
-	parm2 = self.health;
+	parm2 = 1;
 	parm3 = self.armorvalue;
 	if (self.ammo_shells < 25)
 		parm4 = 25;
@@ -77,7 +77,7 @@ void() SetChangeParms =
 void() SetNewParms =
 {
 	parm1 = IT_SHOTGUN | IT_AXE;
-	parm2 = GetMaxHealth();
+	parm2 = 1;
 	parm3 = 0;
 	parm4 = 25;
 	parm5 = 0;
@@ -483,6 +483,7 @@ void() checkLoadModel=
 {
 	if(!self.frame && self.health < time && (self.owner.deadflag==DEAD_NO))
 	{
+		sound (self, CHAN_BODY, "weapons/tink1.wav", 1, ATTN_NORM);
 		//appearance stuff - show the model
 		setmodel (self, "progs/player.mdl");
 		self.frame = self.owner.frame;
@@ -495,7 +496,7 @@ void() checkLoadModel=
 	else
 	{
 		//try again really really soon
-		self.nextthink = time + .05;
+		self.nextthink = time + .1;
 		self.think = checkLoadModel;
 	}
 	
@@ -549,6 +550,8 @@ void() playerCopyThink={
 	setsize (playerCopy, VEC_HULL_MIN*.15, VEC_HULL_MAX*.15);
 	//setmodel and then un set??? this has an undocumented side effect...
 	setmodel (playerCopy, "progs/player.mdl");
+	
+	//setsize (playerCopy, VEC_HULL_MIN, VEC_HULL_MAX);
 	playerCopy.model = "";
 	setorigin(playerCopy, self.owner.origin);
 
@@ -560,12 +563,12 @@ void() playerCopyThink={
 	//cache survive time in an unused variable-yaw_speed
 	// and add a 'think' callback a little in the future when we may 
 	//have moved away so that we can load the model into the entity
-	playerCopy.yaw_speed = time+5;
+	playerCopy.yaw_speed = time+20*(self.owner.health/100.0);
 	
 	if( self.owner.deadflag==DEAD_NO)
 	{
 		// how long before trying to spwan a new player clone
-		self.nextthink = time + .2;	
+		self.nextthink = time + .15;	
 		self.think = playerCopyThink;
 		//self.view_ofs is going to store our 'last position'|
 		self.view_ofs = self.owner.origin;
@@ -1335,7 +1338,12 @@ void(entity targ, entity attacker) ClientObituary =
 			targ.frags = targ.frags - 1;
 			return;
 		}
-
+		
+		//if (attacker.classname == "player_copy")
+		//{
+		//	
+		//}
+		//else 
 		if (attacker.classname == "player")
 		{
 			if (targ == attacker)
