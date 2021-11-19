@@ -478,6 +478,16 @@ entity() SelectSpawnPoint =
 	return spot;
 };
 
+void(entity client,vector v) sprintv=
+{
+	        sprint(self.owner,"[");	       
+	        sprint(self.owner,ftos(v_x));
+	        sprint(self.owner,",");
+	        sprint(self.owner,ftos(v_y));
+	        sprint(self.owner,",");
+	        sprint(self.owner,ftos(v_z));
+	        sprint(self.owner,"]");
+}
 //only load the models after the player isn't touching them anymore
 void() checkLoadModel=
 {
@@ -486,12 +496,25 @@ void() checkLoadModel=
 		sound (self, CHAN_BODY, "weapons/tink1.wav", 1, ATTN_NORM);
 		//appearance stuff - show the model
 		setmodel (self, "progs/player.mdl");
+		setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 		self.frame = self.owner.frame;
 		self.skin = self.owner.skin;
 		
 		//we turned on the model - revert to the original death time
 		self.nextthink = self.yaw_speed;
 		self.think = SUB_Remove;
+		//draw_bounds(min,max,colormap,lifetime,depthtest)
+		//draw_bounds(self.absmin, self.absmax, 111, self.yaw_speed-time, TRUE);
+	        	
+//vector	VEC_HULL_MIN = '-16 -16 -24';
+//vector	VEC_HULL_MAX = '16 16 32';
+	        //sprint(self.owner,"mins: ");
+	        //sprintv(self.owner,self.mins);//-52.8,-46.5,-28.9
+	       // sprint(self.owner,"\n");
+	       // sprint(self.owner,"maxs: ");
+	       // sprintv(self.owner,self.maxs);//45.5,37.1,47.6
+	       // sprint(self.owner,"\n");
+	        
 	}
 	else
 	{
@@ -536,6 +559,7 @@ void() playerCopyThink={
 	playerCopy.owner = self.owner;	
 	
 	playerCopy.origin = self.owner.origin;
+	setorigin(playerCopy, self.owner.origin);
 	playerCopy.angles = self.owner.angles;
 	playerCopy.team = self.owner.team;
 	playerCopy.colormap= self.owner.colormap;
@@ -545,26 +569,27 @@ void() playerCopyThink={
 	playerCopy.takedamage = DAMAGE_NO;
 	playerCopy.solid = SOLID_TRIGGER;
 	playerCopy.movetype = MOVETYPE_NONE;
-//vector	VEC_HULL_MIN = '-16 -16 -24';
-//vector	VEC_HULL_MAX = '16 16 32';
-	setsize (playerCopy, VEC_HULL_MIN*.15, VEC_HULL_MAX*.15);
-	//setmodel and then un set??? this has an undocumented side effect...
+	
+
+	setsize (playerCopy, VEC_HULL_MIN, VEC_HULL_MAX);
+	//setmodel and then un set??? this has an undocumented side effect relating to collision...
 	setmodel (playerCopy, "progs/player.mdl");
 	
 	//setsize (playerCopy, VEC_HULL_MIN, VEC_HULL_MAX);
 	playerCopy.model = "";
-	setorigin(playerCopy, self.owner.origin);
-
-	playerCopy.nextthink = time + .05;
-	playerCopy.think = checkLoadModel;
-	playerCopy.health = time+.2;
-	playerCopy.touch = playerCopyTouch;
 	
 	//cache survive time in an unused variable-yaw_speed
 	// and add a 'think' callback a little in the future when we may 
 	//have moved away so that we can load the model into the entity
 	playerCopy.yaw_speed = time+20*(self.owner.health/100.0);
 	
+
+	playerCopy.nextthink = time + .05;
+	playerCopy.think = checkLoadModel;
+	playerCopy.health = time+.2;
+	playerCopy.touch = playerCopyTouch;
+	
+
 	if( self.owner.deadflag==DEAD_NO)
 	{
 		// how long before trying to spwan a new player clone
@@ -1061,6 +1086,8 @@ void() PlayerPreThink =
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
 	}
+
+	
 };
 	
 /*
