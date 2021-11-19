@@ -1289,7 +1289,7 @@ void() PlayerPostThink =
 			sound (self, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
 		else if (self.jump_flag < -650)
 		{
-			T_Damage (self, world, world, 5); 
+			T_Damage (self, world, world, 1); 
 			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
 			self.deathtype = "falling";
 		}
