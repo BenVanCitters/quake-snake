@@ -1033,6 +1033,12 @@ void() CheckWaterJump =
 	}
 };
 
+float(entity player) getPlayerFragsPerSecond = 
+{
+	local float frags_per_second = (player.health/60.0)*(5.0/12.0);
+	return frags_per_second;
+	
+}
 
 /*
 ================
@@ -1086,6 +1092,17 @@ void() PlayerPreThink =
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
 	}
+	local float diff;
+	
+	diff = time - self.search_time;
+	//we are repurposing 'search_time' for the player since it isn't used 
+	// to be the last frame time so that we can do the above call to find
+	//frame time...
+	self.search_time = time;
+	//add frags for snake len
+	local float frags_per_second = getPlayerFragsPerSecond(self);
+	
+	self.frags = self.frags + frags_per_second*diff;
 
 	
 };

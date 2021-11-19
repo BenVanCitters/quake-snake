@@ -112,15 +112,23 @@ void() lava_nothing={}
 
 void() lava_ball_touch;
 
+	float(entity player) getPlayerFragsPerSecond;
 void() lava_ball_touch =
 {
 	
 	//dprint ("lava_ball_touch");
 	if (other.classname != "player")
-		return;
+		{return;}
+	else
+	{
+		local float frags_per_second = getPlayerFragsPerSecond(other);
+		sprint(other,"earning ");
+		sprint(other, ftos(frags_per_second*60));
+		sprint(other," frags per minute!\n");
+	}
 	if (other.health <= 0)
 		return;
-T_Heal(other, 1, 1);
+	T_Heal(other, 1, 1);
 	//sprint (other, "You got a ball!\n");
 	//other.frags = other.frags + 1;
 	
@@ -527,7 +535,8 @@ void() BackpackTouch =
 
 	acount = 0;
 	sprint (other, "You get ");
-
+	
+	T_Heal(other, 1, TRUE);
 	if (self.items)
 		if ((other.items & self.items) == 0)
 		{
