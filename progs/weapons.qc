@@ -168,7 +168,9 @@ void() ApplyMultiDamage =
 {
 	if (!multi_ent)
 		return;
-	T_Damage (multi_ent, self, self, multi_damage);
+	//nerf the shotgun!
+	if(multi_ent.health > 1)
+		T_Damage (multi_ent, self, self, 1);
 };
 
 void(entity hit, float damage) AddMultiDamage =
