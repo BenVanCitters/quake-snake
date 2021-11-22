@@ -448,10 +448,11 @@ entity() SelectSpawnPoint =
 				if (spot == lastspawn)
 					return lastspawn;
 				pcount = 0;
-				thing = findradius(spot.origin, 32);
+				//don't spawn right on top of other players or trails
+				thing = findradius(spot.origin, 52);
 				while(thing)
 				{
-					if (thing.classname == "player")
+					if (thing.classname == "player" || thing.classname == "player_copy")
 						pcount = pcount + 1;
 					thing = thing.chain;
 				}
