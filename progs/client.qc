@@ -504,16 +504,7 @@ void() checkLoadModel=
 		self.nextthink = self.yaw_speed;
 		self.think = SUB_Remove;
 		//draw_bounds(min,max,colormap,lifetime,depthtest)
-		//draw_bounds(self.absmin, self.absmax, 111, self.yaw_speed-time, TRUE);
-	        	
-//vector	VEC_HULL_MIN = '-16 -16 -24';
-//vector	VEC_HULL_MAX = '16 16 32';
-	        //sprint(self.owner,"mins: ");
-	        //sprintv(self.owner,self.mins);//-52.8,-46.5,-28.9
-	       // sprint(self.owner,"\n");
-	       // sprint(self.owner,"maxs: ");
-	       // sprintv(self.owner,self.maxs);//45.5,37.1,47.6
-	       // sprint(self.owner,"\n");
+		//draw_bounds(self.absmin, self.absmax, 111, self.yaw_speed-time, TRUE);	        	
 	        
 	}
 	else
@@ -523,6 +514,7 @@ void() checkLoadModel=
 		self.think = checkLoadModel;
 	}
 	
+	//remove the tail after a while
 	if(time > self.yaw_speed)
 	{
 		self.think = SUB_Null;
@@ -549,6 +541,13 @@ void() playerCopyTouch =
 	{
 		T_Damage(other,self,self.owner,500);
 	}
+}
+float() canGrowTail=
+{
+	return (self.owner.deadflag==DEAD_NO) && 
+	//intermission
+	(self.owner.takedamage != DAMAGE_NO)  &&  (self.owner.solid != SOLID_NOT) && (self.owner.movetype != MOVETYPE_NONE);
+	
 }
 
 void() playerCopyThink={
@@ -590,7 +589,7 @@ void() playerCopyThink={
 	playerCopy.touch = playerCopyTouch;
 	
 
-	if( self.owner.deadflag==DEAD_NO)
+	if( canGrowTail())//self.owner.deadflag==DEAD_NO)
 	{
 		// how long before trying to spwan a new player clone
 		self.nextthink = time + .15;	
