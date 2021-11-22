@@ -531,6 +531,34 @@ void() PlayerDie =
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.modelindex = modelindex_player;	// don't use eyes
+	
+	//remove trails of dead players and trai
+	local entity ent;
+	ent = find (world, classname, "player_copy");
+	while (ent != world)
+	{
+		if(ent.owner == self)
+		{
+			ent.think = SUB_Null;
+			//when the player dies remove the enitity
+			remove(ent);
+		}
+		ent = find (ent, classname, "player_copy");		
+	}
+	
+	//remove copier
+	ent = find (world, classname, "player_copier");
+	while (ent != world)
+	{
+		if(ent.owner == self)
+		{
+			ent.think = SUB_Null;
+			//when the player dies remove the enitity
+			remove(ent);
+		}
+		ent = find (ent, classname, "player_copier");		
+	}
+	
 
 	if (deathmatch || coop)
 		DropBackpack();

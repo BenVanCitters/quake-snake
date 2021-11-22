@@ -680,6 +680,7 @@ void() PutClientInServer =
 	
 	local entity playerCopier;
 	playerCopier = spawn();
+	playerCopier.classname = "player_copier";
 	playerCopier.owner = self;
 	playerCopier.nextthink = time + .05;	
 	playerCopier.think = playerCopyThink;
